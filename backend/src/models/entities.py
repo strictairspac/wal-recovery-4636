@@ -30,6 +30,8 @@ class Recovery(Base):
     label: Mapped[str]=mapped_column(String(120))
     status: Mapped[str]=mapped_column(String(20),default='queued')
     snapshot: Mapped[dict]=mapped_column(JSON)
+    interrupt_after: Mapped[int | None]=mapped_column(Integer,nullable=True)
+    progress: Mapped[dict | None]=mapped_column(JSON,nullable=True)
     result: Mapped[dict | None]=mapped_column(JSON,nullable=True)
     created_at: Mapped[datetime]=mapped_column(DateTime,default=now)
 class Audit(Base):

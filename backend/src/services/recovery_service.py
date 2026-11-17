@@ -15,3 +15,9 @@ def create_recovery(db,data):
     logs=db.get(LogSet,case.log_set_id)
     obj=Recovery(**data.model_dump(),status='queued',snapshot={'log_set':record(logs),'case':record(case)})
     db.add(obj);db.flush();return obj
+def resume_recovery(db,ident):
+    obj=get_recovery(db,ident)
+    if obj.status!='interrupted':raise HTTPException(409,'仅已中断的恢复可接回')
+    # 中断点已消费：接回后从持久化进度继续，直到完成标志与最终账本一起生效。
+    obj.status='queued';obj.interrupt_after=None
+    db.flush();return obj
